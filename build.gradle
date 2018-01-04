@@ -1,0 +1,81 @@
+apply plugin: "java"
+apply plugin: "maven"
+apply plugin: 'application'
+apply plugin: 'wrapper'
+
+group = "com.johnthad.gradle.appbug"
+version = 1.0
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+wrapper.gradleVersion = '2.14.1'
+
+mainClassName = "${group}.HelloWorld"
+
+ext {
+  mainClass = "${mainClassName}"
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  jcenter()
+}
+
+dependencies {
+  compile 'log4j:log4j:1.2.17'
+
+  testCompile 'junit:junit:4.11'
+}
+
+// `./gradlew -PmainClass=com.johnthad.gradle.appbug.HelloWorld execute`
+task execute(type:JavaExec) {
+  description 'Execute from command line.'
+  main = mainClass
+  jvmArgs = ["-Djava.awt.headless=true"]
+  if (project.hasProperty("appArgs")) {
+    args Eval.me(appArgs)
+  }
+  classpath = sourceSets.main.runtimeClasspath
+}
+
+jar {
+  manifest {
+    attributes(
+      'Built-By': System.getProperty('user.name'),
+      'Built-Jdk': System.getProperty('java.version'),
+      'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+      'Main-Class': mainClassName,
+      'Source-Compatibility': project.sourceCompatibility,
+      'Target-Compatibility': project.targetCompatibility,
+      "Implementation-Vendor": "Thad",
+      "Implementation-Title": "HelloWorld",
+      "Implementation-Version": version,
+      'Implementation-Build': "git rev-parse --short HEAD".execute().text.trim() )
+  }
+}
+
+// NOTE: Uncommenting the exclude closure will prevent
+// build/distributions from being created. Instead distTar,
+// distZip, and assembleDist are called UP-TO-DATE.
+distributions {
+  main {
+    baseName = 'hello'
+    contents {
+      // exclude {
+      //   '**/bin/gradle-bug'
+      //   '**/bin/gradle-bug.bat'
+      // }
+      from('src/site') {
+        into "bin"
+      }
+    }
+  }
+}
+
+compileJava {
+  // http://stackoverflow.com/a/16679733/1316011
+  def bootClasspathStr = java7runtime+"/jre/lib/rt.jar"
+  tasks.withType(AbstractCompile, { AbstractCompile ac ->
+    ac.options.bootClasspath = bootClasspathStr
+  })
+}
