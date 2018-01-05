@@ -57,10 +57,12 @@ jar {
 // NOTE: Uncommenting the exclude closure will prevent
 // build/distributions from being created. Instead distTar,
 // distZip, and assembleDist are called UP-TO-DATE.
+// SOLUTION: Use different exclude API
 distributions {
   main {
     baseName = 'hello'
     contents {
+      exclude 'gradle-bug', 'gradle-bug.bat'
       // exclude {
       //   '**/bin/gradle-bug'
       //   '**/bin/gradle-bug.bat'
