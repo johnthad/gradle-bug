@@ -14,4 +14,4 @@ This is a problem because (for various reasons) I do not want to use Gradle's ge
 
 ## The Solution
 
-Spencer Allain identified the promblem and a solution: Instead of the `exclude` closure (from `CopySpec.exclude(Closure)`), use `exclude 'gradle-bug', 'gradle-bug.bat'`. See his reasoning in the discussion linked to above.
+Spencer Allain identified the problem and a solution: Instead of the `exclude` closure (from `CopySpec.exclude(Closure)`), use `exclude 'gradle-bug', 'gradle-bug.bat'`. See his reasoning in the discussion linked to above.
